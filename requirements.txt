@@ -1,0 +1,7 @@
+requests
+fastapi
+uvicorn
+pydantic
+sgfmill
+matplotlib
+aiohttp

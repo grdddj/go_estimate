@@ -1,0 +1,10 @@
+__pycache__
+.mypy_cache
+analysis_logs
+*.sgf
+!game.sgf
+*.json
+*.png
+!example.png
+*.log
+katago*
