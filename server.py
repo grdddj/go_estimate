@@ -1,7 +1,9 @@
 import asyncio
 import json
 import logging
+import random
 import subprocess
+import time
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
@@ -85,7 +87,9 @@ class AnalysisRequest(BaseModel):
 @app.post("/analyze")
 async def analyze(request: AnalysisRequest) -> PositionInfo:
     try:
-        logger.info(f"Analysis request - {request}")
+        request_id = str(random.randint(0, 100000000))
+        now = time.time()
+        logger.info(f"Analysis request - {request_id} - {request}")
         # Convert request object to dictionary
         request_data: GameInputData = {
             "initial_stones": request.initial_stones,
@@ -99,6 +103,9 @@ async def analyze(request: AnalysisRequest) -> PositionInfo:
         json_response = await send_request_to_katago(request_data)
 
         info = get_position_info_from_json_output(json_response)
+        logger.info(
+            f"Request finished - {request_id} - {info} - took: {time.time() - now} s"
+        )
         if not info:
             raise HTTPException(status_code=500, detail="Invalid response from KataGo")
         return info
@@ -121,7 +128,9 @@ async def sgf(request: SgfRequest) -> PositionInfo:
     # return PositionInfo(scoreLead=30 * random.random() - 30, moveInfos=[])
 
     try:
-        logger.info(f"SGF request - {request}")
+        request_id = str(random.randint(0, 100000000))
+        now = time.time()
+        logger.info(f"SGF request - {request_id} - {request}")
         sgf = request.sgf
         visits = request.visits
 
@@ -129,6 +138,9 @@ async def sgf(request: SgfRequest) -> PositionInfo:
         json_response = await send_request_to_katago(data)
 
         info = get_position_info_from_json_output(json_response)
+        logger.info(
+            f"Request finished - {request_id} - {info} - took: {time.time() - now} s"
+        )
         if not info:
             raise HTTPException(status_code=500, detail="Invalid response from KataGo")
         return info

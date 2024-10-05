@@ -224,18 +224,16 @@ class App:
                 if phase == "finished":
                     print("Game has finished.")
                     self.running = False
-                    # Update the GUI in the main thread
                     self.root.after(0, self.on_game_over)
-                    break  # Exit the loop
+                    break
 
                 current_move_number = self.get_move_number(game_info)
                 if current_move_number > self.last_move_number:
                     print(f"New move detected. Move number: {current_move_number}")
                     self.last_move_number = current_move_number
                     sgf_content = self.build_sgf(game_info)
-                    # Send SGF content to the backend
                     self.send_sgf_to_backend(sgf_content)
-            time.sleep(self.interval / 1000.0)  # Convert milliseconds to seconds
+            time.sleep(self.interval / 1000.0)
 
     def build_sgf(self, game_info: dict) -> str:
         """

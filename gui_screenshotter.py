@@ -1,12 +1,11 @@
+import threading
 import tkinter as tk
 from tkinter import ttk
-import threading
-from typing import Tuple, Optional
-
-from pynput import mouse
+from typing import Optional, Tuple
 
 # Import necessary modules for screenshot and image processing
 from PIL import ImageGrab
+from pynput import mouse
 
 from img2sgf import sgf_from_image
 
@@ -15,6 +14,8 @@ Pixel = tuple[int, int]
 # Known for my screen
 # REGION = (368, 255, 1029, 926)
 REGION = None
+
+TITLE = "Go Game Screen Capture (by grdddj)"
 
 
 class App:
@@ -41,7 +42,7 @@ class App:
         """
         Set up the user interface.
         """
-        self.root.title("Go Game Screen Capture")
+        self.root.title(TITLE)
 
         # Create frames for layout
         input_frame = ttk.Frame(self.root)
@@ -94,7 +95,7 @@ class App:
         Allows the user to select a region of the screen.
         """
         board_assigned = BoardAssigner()
-        one, two = board_assigned.get_left_top_and_right_bottom_chessboard_pixels()
+        one, two = board_assigned.get_left_top_and_right_bottom_board_pixels()
         self.region = (one[0], one[1], two[0], two[1])
         print(f"Selected region: {self.region}")
 
@@ -178,8 +179,6 @@ class App:
 
         screenshot.save(self.screenshot_file)
 
-        # Placeholder for custom processing logic
-        # For example, analyze the screenshot and output to SGF file
         sgf_data = self.process_screenshot(self.screenshot_file)
 
         # Save the SGF data to the file
@@ -200,7 +199,6 @@ class App:
         Returns:
             A string containing the SGF data.
         """
-        # sgf_data = "(;GM[1]FF[4]CA[UTF-8]SZ[19];B[pd];W[dd])"
         sgf_data = sgf_from_image(file)
         print("sgf_data", sgf_data)
         return sgf_data
@@ -215,14 +213,14 @@ class App:
 
 class BoardAssigner:
     def __init__(self) -> None:
-        self._left_top: "Pixel" | None = None
-        self._right_bottom: "Pixel" | None = None
+        self._left_top: Pixel | None = None
+        self._right_bottom: Pixel | None = None
 
-    def get_left_top_and_right_bottom_chessboard_pixels(
+    def get_left_top_and_right_bottom_board_pixels(
         self,
     ) -> tuple["Pixel", "Pixel"]:
-        """Returns boundaries of the chessboard"""
-        print("Please rightlick the most upperleft corner of the chessboard")
+        """Returns boundaries of the board"""
+        print("Please rightlick the most upperleft corner of the board")
         with mouse.Listener(on_click=self._assign_two_corners_on_click) as listener:
             listener.join()
 
@@ -239,11 +237,11 @@ class BoardAssigner:
         if button == mouse.Button.right and pressed:
             if self._left_top is None:
                 self._left_top = (x, y)
-                print(f"chessboard_left_top_pixel assigned - {x},{y}")
-                print("Please rightlick the most bottomright corner of the chessboard")
+                print(f"board_left_top_pixel assigned - {x},{y}")
+                print("Please rightlick the most bottomright corner of the board")
             elif self._right_bottom is None:
                 self._right_bottom = (x, y)
-                print(f"chessboard_right_bottom_pixel assigned - {x},{y}")
+                print(f"board_right_bottom_pixel assigned - {x},{y}")
 
         return not self._stop_listening_on_mouse_input()
 

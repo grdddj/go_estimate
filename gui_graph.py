@@ -9,7 +9,7 @@ import aiohttp
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 
-TITLE = "Go estimation graph"
+TITLE = "Go estimation graph (by grdddj)"
 INTERVAL_MS = 2000
 
 
@@ -29,7 +29,6 @@ class App:
         self.loop = loop
         self.interval = interval  # in milliseconds
         self.values: list[float] = []
-        self.measurement_number: int = 0
         self.running = False  # Flag to control the periodic task
         self.task_started = False  # Flag to prevent multiple starts
 
@@ -125,7 +124,6 @@ class App:
 
             # Reset values and update plot
             self.values = []
-            self.measurement_number = 0
             self.root.after(0, self.update_plot, True)
 
             # Start the periodic task
@@ -199,7 +197,6 @@ class App:
                         print("json_response", json_response)
                         score_lead = json_response.get("scoreLead")
                         if isinstance(score_lead, (int, float)):
-                            self.measurement_number += 1
                             self.values.append(score_lead)
                             print(f"Received value: {score_lead}")
                             # Update plot on the main thread
