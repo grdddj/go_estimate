@@ -120,7 +120,6 @@ class SgfRequest(BaseModel):
     visits: int
 
 
-# Define the FastAPI endpoint for analysis
 @app.post("/sgf")
 async def sgf(request: SgfRequest) -> PositionInfo:
     # import random
@@ -148,6 +147,11 @@ async def sgf(request: SgfRequest) -> PositionInfo:
     except Exception as e:
         logger.exception(str(e))
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/sgf")
+async def sgf_docs() -> str:
+    return "To interact with the /sgf endpoint, send a POST request with the 'sgf: str' and 'visits: num' fields in the JSON body."
 
 
 # Close the KataGo process when shutting down
