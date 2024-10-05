@@ -5,3 +5,7 @@ pydantic
 sgfmill
 matplotlib
 aiohttp
+cv2
+PIL
+numpy
+sklearn
